@@ -1,0 +1,35 @@
+include_directories(
+	${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/scribus
+	${SCRIBUS_AUTOGEN_INCLUDE_PATH}
+)
+
+set(BARCODEGENERATOR_PLUGIN_SOURCES
+	barcode.cpp
+	barcodegenerator.cpp
+	barcodegeneratorrenderthread.cpp
+)
+
+set(SCRIBUS_BARCODEGENERATOR_PLUGIN "barcodegenerator")
+
+add_library(${SCRIBUS_BARCODEGENERATOR_PLUGIN} MODULE ${BARCODEGENERATOR_PLUGIN_SOURCES})
+
+target_link_libraries(${SCRIBUS_BARCODEGENERATOR_PLUGIN} ${EXE_NAME})
+
+if(WANT_PCH)
+	target_precompile_headers(${SCRIBUS_BARCODEGENERATOR_PLUGIN} PRIVATE "../plugins_pch.h")
+endif()
+
+install(TARGETS ${SCRIBUS_BARCODEGENERATOR_PLUGIN}
+	LIBRARY
+	DESTINATION ${PLUGINDIR}
+	PERMISSIONS ${PLUGIN_PERMISSIONS}
+)
+
+install(FILES barcode.ps
+	DESTINATION ${SHAREDIR}/plugins
+)
+
+add_dependencies(Plugins ${SCRIBUS_BARCODEGENERATOR_PLUGIN})
+
+# set_target_properties(${SCRIBUS_BARCODEGENERATOR_PLUGIN} PROPERTIES VERSION "0.0.0")
